@@ -1,0 +1,43 @@
+version: "3"
+
+services:
+  app:
+    container_name: eFuse
+    build:
+      context: ./
+    depends_on:
+      - mongo
+      - redis
+    ports:
+      - 5000:5000
+    networks:
+      - app-network
+    # volumes:
+    #   - ./src:/app
+    #   - /app/node_modules
+
+  mongo:
+    image: mongo:3.6.8
+    container_name: mongo
+    volumes:
+      - mongo-data:/data/db
+    restart: always
+    networks:
+      - app-network
+    ports:
+      - 27007:27017
+
+  redis:
+    image: "bitnami/redis:latest"
+    restart: always
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+volumes:
+  mongo-data:
+    driver: local
